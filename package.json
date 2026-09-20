@@ -1,9 +1,10 @@
 {
   "name": "vegamovies-stremio",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "dependencies": {
     "stremio-addon-sdk": "^1.6.10",
+    "express": "^4.19.2",
     "cheerio": "^1.0.0-rc.12",
     "node-fetch": "^2.7.0"
   }
