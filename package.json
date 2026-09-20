@@ -1,6 +1,6 @@
 {
-  "name": "vegamovies",
-  "version": "1.0.0",
+  "name": "vegamovies-stremio",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
     "stremio-addon-sdk": "^1.6.10",
