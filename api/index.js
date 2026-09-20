@@ -1,4 +1,7 @@
-const { addonBuilder } = require("stremio-addon-sdk");
+const express = require("express");
+const { addonBuilder, getRouter } = require("stremio-addon-sdk");
+
+const app = express();
 
 const manifest = {
   id: "org.vegamovies.addon",
@@ -15,7 +18,7 @@ const builder = new addonBuilder(manifest);
 builder.defineStreamHandler(async ({ type, id }) => {
   console.log(`Stream requested for ${type} with ID: ${id}`);
   
-  // Scraper logic will be added here
+  // Scraper logic will go here
   return {
     streams: [
       {
@@ -27,36 +30,9 @@ builder.defineStreamHandler(async ({ type, id }) => {
 });
 
 const addonInterface = builder.getInterface();
+const router = getRouter(addonInterface);
 
-module.exports = async (req, res) => {
-  // CORS Headers
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Headers", "*");
-  res.setHeader("Content-Type", "application/json");
+// Use Stremio SDK Router inside Express
+app.use("/", router);
 
-  const url = req.url || "/";
-
-  // Handle Root and Manifest requests
-  if (url === "/" || url === "/manifest.json") {
-    return res.status(200).send(addonInterface.manifest);
-  }
-
-  // Handle Stream requests: /stream/:type/:id.json
-  if (url.startsWith("/stream/")) {
-    try {
-      const cleanUrl = url.replace(".json", "");
-      const parts = cleanUrl.split("/").filter(Boolean); // ['stream', 'movie', 'tt12345']
-      const type = parts[1];
-      const id = parts[2];
-
-      const streamResult = await addonInterface.get("stream", type, id);
-      return res.status(200).send(streamResult || { streams: [] });
-    } catch (err) {
-      console.error("Stream handler error:", err);
-      return res.status(500).send({ error: err.message, streams: [] });
-    }
-  }
-
-  return res.status(404).send({ error: "Not Foun
-    d" });
-};
+module.exports = app;
